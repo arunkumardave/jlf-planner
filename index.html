@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Jaipur Literature Festival Planner</title>
+
+<style>
+:root {
+  --pink:#D1256D;
+  --purple:#4A148C;
+  --gold:#FFB300;
+  --cream:#FDFBF7;
+  --dark:#333;
+  --fontH: Georgia, serif;
+  --fontB: Helvetica, Arial, sans-serif;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:var(--fontB);
+  background:var(--cream);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.app {
+  width:100%;
+  max-width:680px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 10px 40px rgba(0,0,0,.1);
+  overflow:hidden;
+  border-top:6px solid var(--pink);
+}
+header {
+  padding:24px;
+  text-align:center;
+}
+header h1 {
+  margin:0;
+  font-family:var(--fontH);
+  color:var(--pink);
+}
+header p {
+  margin:10px 0 0;
+  color:#666;
+  font-size:.95rem;
+  line-height:1.5;
+}
+.slide {
+  display:none;
+  padding:30px;
+}
+.slide.active { display:block; }
+h2 {
+  font-family:var(--fontH);
+  color:var(--purple);
+}
+.tags {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.tag {
+  padding:8px 14px;
+  border:1px solid #ddd;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:.85rem;
+}
+.tag.selected {
+  background:var(--pink);
+  color:#fff;
+  border-color:var(--pink);
+}
+.category {
+  margin-bottom:20px;
+}
+.category h3 {
+  margin:0 0 8px;
+  font-size:.95rem;
+  color:#444;
+}
+.date {
+  display:flex;
+  align-items:center;
+  padding:12px;
+  border:1px solid #eee;
+  border-radius:8px;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+.date input { margin-right:12px; accent-color:var(--pink); }
+.footer {
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
+button {
+  padding:12px 20px;
+  border:none;
+  border-radius:4px;
+  font-family:var(--fontH);
+  font-weight:bold;
+  cursor:pointer;
+}
+.primary { background:var(--pink); color:#fff; }
+.secondary { background:#eee; }
+
+.slider-wrap {
+  text-align:center;
+  margin-top:20px;
+}
+.slider-val {
+  font-size:3.2rem;
+  color:var(--pink);
+  font-family:var(--fontH);
+}
+.slider-label {
+  margin-top:6px;
+  font-size:.9rem;
+  color:#666;
+}
+input[type=range] {
+  width:100%;
+  margin-top:20px;
+}
+
+.results {
+  max-height:500px;
+  overflow-y:auto;
+}
+.day {
+  position:sticky;
+  top:0;
+  background:var(--cream);
+  padding:8px 0;
+  border-bottom:2px solid var(--purple);
+  font-family:var(--fontH);
+}
+.card {
+  background:#fff;
+  border-left:4px solid var(--gold);
+  padding:14px;
+  margin:14px 0;
+  box-shadow:0 2px 5px rgba(0,0,0,.05);
+}
+.time { font-size:.85rem; color:#777; font-weight:bold; }
+.title { font-weight:bold; margin:5px 0; }
+.venue { color:var(--pink); font-size:.85rem; }
+.speakers { font-style:italic; font-size:.9rem; margin-top:6px; }
+.badge {
+  float:right;
+  font-size:.7rem;
+  padding:2px 6px;
+  border-radius:4px;
+  background:#eee;
+}
+.match { background:#c8f7c5; }
+
+/* INTRO SLIDE ONLY */
+.intro {
+  text-align:center;
+  padding:40px 30px;
+}
+.intro img {
+  max-width:160px;
+  margin-bottom:20px;
+}
+.intro .credits {
+  margin-top:16px;
+  font-size:.85rem;
+  color:#777;
+  line-height:1.4;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <h1>Jaipur Literature Festival <br>Experience Planner</h1>
+  <p>
+    With 300+ sessions and 400+ speakers, the Jaipur Literature Festival can be overwhelming. 
+    Let our AI-powered recommender craft your personalised itinerary.
+  </p>
+</header>
+
+<!-- SLIDE 0 -->
+<div class="slide active" id="s0">
+  <div class="intro">
+    <img src="https://www.jaipurliteraturefestival.org/assets/logo-D608H6WC.svg"
+         alt="Jaipur Literature Festival Logo">
+
+    <h2>Jaipur Literature Festival Planner</h2>
+
+    <p>
+      A simple, personalised guide to explore sessions,
+      speakers, and ideas that matter to you.
+    </p>
+
+    <div class="credits">
+      Built by <br>
+      Arun Kumar Dave<br>
+      Senior Software Enginner, Zoho<br>
+      Jaipur Literature Festival Volunteer
+    </div>
+
+    <div class="footer" style="justify-content:center; margin-top:30px;">
+      <button class="primary" onclick="go(1)">Start planning →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 -->
+<div class="slide" id="s1">
+  <h2>Choose your interests</h2>
+  <div id="tags"></div>
+  <div class="footer">
+    <button class="secondary" onclick="go(0)">← Back</button>
+    <button class="primary" onclick="go(2)">Next →</button>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide" id="s2">
+  <h2>Dates attending</h2>
+  <div id="dates"></div>
+  <div class="footer">
+    <button class="secondary" onclick="go(1)">← Back</button>
+    <button class="primary" onclick="go(3)">Next →</button>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide" id="s3">
+  <h2>Pace your day</h2>
+
+  <div class="slider-wrap">
+    <div class="slider-val" id="count">4</div>
+    <div class="slider-label">sessions per day</div>
+  </div>
+
+  <input type="range" min="1" max="8" value="4"
+    oninput="count.innerText=this.value; state.limit=+this.value">
+
+  <div class="footer">
+    <button class="secondary" onclick="go(2)">← Back</button>
+    <button class="primary" onclick="generate()">Curate</button>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide" id="s4">
+  <h2>Your itinerary</h2>
+  <div class="results" id="results"></div>
+  <div class="footer">
+    <button class="secondary" onclick="location.reload()">Start over</button>
+    <button class="primary" onclick="window.print()">Print</button>
+  </div>
+</div>
+
+</div>
+
+<!-- JS BELOW IS 100% UNCHANGED FROM YOUR VERSION -->
+<script>
+/* ⬇️ YOUR ORIGINAL JS — UNTOUCHED ⬇️ */
+const JLF_API="https://api.jaipurliteraturefestival.org/api/programmePage";
+const DATES=["2026-01-15","2026-01-16","2026-01-17","2026-01-18","2026-01-19"];
+let DATA=[];
+
+const state={tags:new Set(),dates:new Set(DATES),limit:4};
+
+async function fetchProgrammeData(){
+  const res=await Promise.all(
+    DATES.map(async d=>{
+      const r=await fetch(`${JLF_API}?lang=en&search=&date=${d}&theme_id=&hall_id=&year=2026`);
+      return [d,await r.json()];
+    })
+  );
+  return Object.fromEntries(res);
+}
+
+function convertProgrammeToSessions(programmeByDate) {
+  const sessions = [];
+
+  const stripSpecialChars = (value) => {
+    if (typeof value !== "string") return value;
+    return value.replace(/[\\'"]/g, "").replace(/\s+/g, " ").trim();
+  };
+
+  const shouldIgnoreSession = (title = "") => {
+    return ["inaugural address", "morning music"].some(keyword =>
+      title.toLowerCase().includes(keyword)
+    );
+  };
+
+  const parseTimeTo24h = (timeStr) => {
+    if (!timeStr) return null;
+    let [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (modifier) {
+      modifier = modifier.toUpperCase();
+      if (modifier === "PM" && hours < 12) hours += 12;
+      if (modifier === "AM" && hours === 12) hours = 0;
+    }
+
+    if (isNaN(hours) || isNaN(minutes)) return null;
+
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const toISODateTime = (date, timeStr) => {
+    const time24 = parseTimeTo24h(timeStr);
+    if (!date || !time24) return null;
+    return `${date}T${time24}`;
+  };
+
+  Object.entries(programmeByDate).forEach(([date, apiResponse]) => {
+    const programs = apiResponse?.programs || [];
+
+    programs.forEach((program) => {
+      let startTime = null;
+      let endTime = null;
+
+      if (program.time_slot) {
+        const times = program.time_slot.split("-").map(t => t.trim());
+        startTime = times[0];
+        endTime = times[1];
+      }
+
+      const rawTitle =
+        program.title || program.name || program.program_title || "";
+
+      if (shouldIgnoreSession(rawTitle)) return;
+
+      const speakers =
+        (program.program_data && program.program_data.length > 0
+          ? program.program_data
+          : []
+        )
+          .map(p => {
+            const name = [p.first_name, p.last_name].filter(Boolean).join(" ");
+            return stripSpecialChars(name || p.title || "");
+          })
+          .filter(Boolean);
+
+      sessions.push({
+        id: program.id,
+        title: stripSpecialChars(rawTitle),
+        start: program.start_datetime
+          ? program.start_datetime.slice(0, 16)
+          : toISODateTime(date, startTime),
+        end: program.end_datetime
+          ? program.end_datetime.slice(0, 16)
+          : toISODateTime(date, endTime),
+        venue: stripSpecialChars(program.hall_name || ""),
+        speakers,
+        tags: program.theme_name
+          ? [stripSpecialChars(program.theme_name)]
+          : []
+      });
+    });
+  });
+
+  return sessions;
+}
+
+(async()=>{
+  const raw=await fetchProgrammeData();
+  DATA=convertProgrammeToSessions(raw);
+})();
+
+const CATEGORIES = {
+  "Literature & Writing": ["Fiction","Non-Fiction","Poetry","Literature","Writing","Translation"],
+  "History & Politics": ["History","Indian History","Politics","Geopolitics"],
+  "Culture, Art & Heritage": ["Culture","Art","Music"],
+  "Science & Technology": ["Science","Technology"],
+  "Nature & Climate": ["Climate","Nature"],
+  "Famous Personalities": ["Biography","Memoir"]
+};
+
+const tagsWrap = document.getElementById("tags");
+Object.entries(CATEGORIES).forEach(([cat,items])=>{
+  const block=document.createElement("div");
+  block.className="category";
+  block.innerHTML=`<h3>${cat}</h3>`;
+  const row=document.createElement("div");
+  row.className="tags";
+  items.forEach(t=>{
+    const el=document.createElement("div");
+    el.className="tag";
+    el.textContent=t;
+    el.onclick=()=>{ el.classList.toggle("selected"); state.tags.has(t)?state.tags.delete(t):state.tags.add(t); };
+    row.appendChild(el);
+  });
+  block.appendChild(row);
+  tagsWrap.appendChild(block);
+});
+
+["2026-01-15","2026-01-16","2026-01-17","2026-01-18","2026-01-19"].forEach(d=>{
+  const el=document.createElement("div");
+  el.className="date";
+  el.innerHTML=`<input type="checkbox" checked><strong>${d}</strong>`;
+  el.onclick=e=>{
+    const cb=el.querySelector("input");
+    if(e.target!==cb) cb.checked=!cb.checked;
+    cb.checked?state.dates.add(d):state.dates.delete(d);
+  };
+  document.getElementById("dates").appendChild(el);
+});
+
+function go(n){
+  document.querySelectorAll(".slide").forEach(s=>s.classList.remove("active"));
+  document.getElementById("s"+n).classList.add("active");
+}
+
+function conflict(list,c){
+  const cs=new Date(c.start), ce=new Date(c.end);
+  return list.some(s=>{
+    const ss=new Date(s.start), se=new Date(s.end);
+    return cs < se && ce > ss;
+  });
+}
+
+function generate(){
+  let sessions = DATA
+    .filter(s=>state.dates.has(s.start.split("T")[0]))
+    .map(s=>{
+      let score=0;
+      s.tags.forEach(t=>state.tags.has(t)&&score++);
+      return {...s,score};
+    })
+    .sort((a,b)=>b.score-a.score || new Date(a.start)-new Date(b.start));
+
+  const plan={};
+  state.dates.forEach(d=>plan[d]=[]);
+
+  sessions.forEach(s=>{
+    const d=s.start.split("T")[0];
+    if(plan[d] && plan[d].length<state.limit && !conflict(plan[d],s)){
+      plan[d].push(s);
+    }
+  });
+
+  render(plan);
+  go(4);
+}
+
+function render(plan){
+  const r=document.getElementById("results");
+  r.innerHTML="";
+  Object.keys(plan).sort().forEach(d=>{
+    if(!plan[d].length) return;
+    r.innerHTML+=`<div class="day">${d}</div>`;
+    plan[d].forEach(s=>{
+      r.innerHTML+=`
+        <div class="card">
+          <div class="time">
+            ${new Date(s.start).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+            <span class="badge ${s.score?"match":""}">${s.score?"Match":"Discover"}</span>
+          </div>
+          <div class="title">${s.title}</div>
+          <div class="venue">📍 ${s.venue}</div>
+          <div class="speakers">with ${s.speakers.join(", ")}</div>
+        </div>`;
+    });
+  });
+}
+</script>
+
+</body>
+</html>
