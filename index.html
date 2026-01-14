@@ -24,6 +24,7 @@ body {
   justify-content:center;
   align-items:center;
   min-height:100vh;
+  align-items: stretch;
 }
 .app {
   width:100%;
@@ -163,7 +164,6 @@ input[type=range] {
 /* INTRO SLIDE ONLY */
 .intro {
   text-align:center;
-  padding:40px 30px;
 }
 .intro img {
   max-width:160px;
@@ -180,7 +180,6 @@ input[type=range] {
     color: #666;
     font-size: .95rem;
     line-height: 1.5;
-    margin-bottom: 50px;
     margin-top: -50px;
     text-align: center;
 }
@@ -195,6 +194,10 @@ input[type=range] {
 #s1 .footer{
   margin-bottom: 100px;
 }
+.image{
+  max-width:160px;
+  max-height:160px;
+}
 </style>
 </head>
 
@@ -202,7 +205,8 @@ input[type=range] {
 <div class="app">
 
 <header>
-  <h1>Jaipur Literature Festival<br>Experience Planner</h1>
+  <a href="https://freeimage.host/"><img class="image" src="https://iili.io/f8skdTg.png" alt="f8skdTg.png" border="0" /></a>
+  <h1>Experience Planner</h1>
 </header>
 
 <!-- SLIDE 0 -->
@@ -215,13 +219,14 @@ input[type=range] {
     build a <strong>personalised itinerary</strong> shaped by your interests, time, and curiosity.
   </p>
   <div class="intro">
-    <!-- <img src="https://freeimage.host/i/f8skdTg" alt="Jaipur Literature Festival Logo"> -->
-    <a href="https://freeimage.host/"><img src="https://iili.io/f8skdTg.png" alt="f8skdTg.png" border="0" /></a>
-    <section>
+    <!-- <section>
       <h2>Your Personal Guide to JLF</h2>
     </section>
-
+ -->
     <div class="credits">
+      <div class="footer" style="justify-content:center; margin-top:30px;">
+        <button class="primary" onclick="go(1)">Start planning →</button>
+      </div>
       <p>
         Built by<br>
         <strong>Arun Kumar Dave</strong><br>
@@ -230,9 +235,6 @@ input[type=range] {
       </p>
     </div>
 
-    <div class="footer" style="justify-content:center; margin-top:30px;">
-      <button class="primary" onclick="go(1)">Start planning →</button>
-    </div>
   </div>
 </div>
 
